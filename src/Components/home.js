@@ -33,17 +33,17 @@ const searchStyle = {display:'flex' , justifyContent:'center'};
 const cardStyle = { maxWidth: 320 , borderRadius:'1rem', mb:'1rem'};
 const titleStyle = {display:'flex', justifyContent:'center', fontSize:'1.3rem', fontFamily: 'DM Serif Display'};
 const signupStyle = {color:'white',position:'absolute', right:'18%', top:'10%', borderRadius:'4rem', border:'2px solid white'
-, marginLeft:'1.2rem'};
+, marginLeft:'1.2rem',textDecoration:'none'};
 const loginStyle = {backgroundColor:'white', color:'black', position:'absolute', right:'10%', top:'10%', border:'2px solid white'
-, borderRadius:'4rem'};
+, borderRadius:'4rem',textDecoration:'none'};
 
 const Home = () => {
   const [recipeData , setRecipeData] = useState([]);
-  const [recipe , setRecipe ] = useState(recipeData[0])
   const sendGetRequest = async () => {
+    
 
       try {
-          axios.post('https://therecipepool.pythonanywhere.com/api/filter-meal/',
+          await axios.post('https://therecipepool.pythonanywhere.com/api/filter-meal/',
           { meal:'dinner'},
           {
               headers:{
@@ -135,11 +135,92 @@ const Home = () => {
     color: theme.palette.text.secondary,
   }));
 
-  const [like , setLike] = useState(false);
+  const baseURL = 'https://therecipepool.pythonanywhere.com/api/filter-meal/'
+
+
+  function RenderData(props){
+    const recipeDataCopy = props.data;
+    // props.data = entire array of recipes
+    const recipes = recipeDataCopy.map(
+      (recipe) => 
+      // enter {} here leads to blank page ???
+      <span key={recipe.id}>
+
+      <Card sx={cardStyle}>
+        <CardMedia
+          component="img"
+          height="194"
+          image={baseURL+recipe.cuisine.image}
+          alt={recipe.label}
+          sx={{borderRadius:'0.5rem', margin:'0.8rem', display:'inline-block', width:'90%'}}
+        />
+        <p style={titleStyle}>{recipe.label}</p>
+        <CardContent>
+          <Typography variant="body2" color="text.secondary">
+            {recipe.healthLabels}
+          </Typography>
+        </CardContent>
+        <CardActions disableSpacing>
+          <IconButton aria-label="add to favorites">
+            <FavoriteBorderOutlinedIcon />
+          </IconButton>
+          <IconButton aria-label="share">
+            <ShareIcon />
+          </IconButton>
+          <ExpandMore
+            expand={RecipeReviewCard.expanded}
+            onClick={RecipeReviewCard.handleExpandClick}
+            aria-expanded={RecipeReviewCard.expanded}
+            aria-label="show more"
+          >
+            <ExpandMoreIcon />
+          </ExpandMore>
+
+        </CardActions>
+        
+        <Collapse in={RecipeReviewCard.expanded} timeout="auto" unmountOnExit>
+          <CardContent>
+            <Typography paragraph>Method:</Typography>
+            <Typography paragraph>
+              Heat 1/2 cup of the broth in a pot until simmering, add saffron and set
+              aside for 10 minutes.
+            </Typography>
+            <Typography paragraph>
+              Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over
+              medium-high heat. Add chicken, shrimp and chorizo, and cook, stirring
+              occasionally until lightly browned, 6 to 8 minutes. Transfer shrimp to a
+              large plate and set aside, leaving chicken and chorizo in the pan. Add
+              pimentón, bay leaves, garlic, tomatoes, onion, salt and pepper, and cook,
+              stirring often until thickened and fragrant, about 10 minutes. Add
+              saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.
+            </Typography>
+            <Typography paragraph>
+              Add rice and stir very gently to distribute. Top with artichokes and
+              peppers, and cook without stirring, until most of the liquid is absorbed,
+              15 to 18 minutes. Reduce heat to medium-low, add reserved shrimp and
+              mussels, tucking them down into the rice, and cook again without
+              stirring, until mussels have opened and rice is just tender, 5 to 7
+              minutes more. (Discard any mussels that don&apos;t open.)
+            </Typography>
+            <Typography>
+              Set aside off of the heat to let rest for 10 minutes, and then serve.
+            </Typography>
+          </CardContent>
+        </Collapse>
+
+        
+      </Card>
+      </span>
+
+      );
+      return(
+      <> {recipes} </> );  
+  }
 
   return (
     <>
     {/* header start */}
+
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static"
       sx={{background: 
@@ -160,9 +241,19 @@ const Home = () => {
           </Search>
         <Stack spacing={5} direction="row">
           <Button variant="text"
-          sx={signupStyle}>Sign Up </Button>
+          sx={signupStyle}>
+          <Link to="/signup" underline="hover ">
+                Sign Up
+          </Link> 
+          </Button>
+
           <Button variant="outlined"
-          sx={loginStyle}>Login </Button>
+          sx={loginStyle}>
+            <Link to="/login" underline="hover">
+                Login
+          </Link>
+          </Button>
+
         </Stack>
         </Toolbar>
 
@@ -172,86 +263,17 @@ const Home = () => {
       
     </Box>
 
-    {/* card start */}
-    
-    <Box sx={{ flexGrow: 1, backgroundColor:'#424242' }}>
+    <Box sx={{ flexGrow: 1, backgroundColor:'#424242'}}>
       <Grid container spacing={{sm:2,md:3}} 
-      sx={{p:'2rem'}}>
-        <Grid item md={3} sm={6} xs={12} >
-            <Card sx={cardStyle}>
-      <CardMedia
-        component="img"
-        height="194"
-        image={recipeData[0].cuisine.image}
-        alt="Paella dish"
-        sx={{borderRadius:'0.5rem', margin:'0.8rem', display:'inline-block', width:'90%'}}
-      />
-      <p style={titleStyle}>Shrimp and Chorizo Paella</p>
-      <CardContent>
-        <Typography variant="body2" color="text.secondary">
-          This impressive paella is a perfect party dish and a fun meal to cook
-          together with your guests. Add 1 cup of frozen peas along with the mussels,
-          if you like.
-        </Typography>
-      </CardContent>
-      <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteBorderOutlinedIcon />
-        </IconButton>
-        <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton>
-        <ExpandMore
-          expand={RecipeReviewCard.expanded}
-          onClick={RecipeReviewCard.handleExpandClick}
-          aria-expanded={RecipeReviewCard.expanded}
-          aria-label="show more"
-        >
-          <ExpandMoreIcon />
-        </ExpandMore>
-
-      </CardActions>
-      
-      <Collapse in={RecipeReviewCard.expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-          <Typography paragraph>Method:</Typography>
-          <Typography paragraph>
-            Heat 1/2 cup of the broth in a pot until simmering, add saffron and set
-            aside for 10 minutes.
-          </Typography>
-          <Typography paragraph>
-            Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over
-            medium-high heat. Add chicken, shrimp and chorizo, and cook, stirring
-            occasionally until lightly browned, 6 to 8 minutes. Transfer shrimp to a
-            large plate and set aside, leaving chicken and chorizo in the pan. Add
-            pimentón, bay leaves, garlic, tomatoes, onion, salt and pepper, and cook,
-            stirring often until thickened and fragrant, about 10 minutes. Add
-            saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.
-          </Typography>
-          <Typography paragraph>
-            Add rice and stir very gently to distribute. Top with artichokes and
-            peppers, and cook without stirring, until most of the liquid is absorbed,
-            15 to 18 minutes. Reduce heat to medium-low, add reserved shrimp and
-            mussels, tucking them down into the rice, and cook again without
-            stirring, until mussels have opened and rice is just tender, 5 to 7
-            minutes more. (Discard any mussels that don&apos;t open.)
-          </Typography>
-          <Typography>
-            Set aside off of the heat to let rest for 10 minutes, and then serve.
-          </Typography>
-        </CardContent>
-      </Collapse>
-
-      
-    </Card>
+    sx={{p:'2rem'}}>
+        <Grid item  sm={6} md={4} xs={12} >
+          <RenderData data={recipeData}/>
         </Grid>
       </Grid>
     </Box>
 
-    
-    
-
     </>
+
   );
 };
 

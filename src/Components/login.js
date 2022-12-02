@@ -97,9 +97,12 @@ const Login = () => {
     }
   };
 
+  const [count , setCount] = useState(0);
+  const baseURL = 'https://therecipepool.pythonanywhere.com/'
+
 
   const token2 = (response) => {
-    axios.post("https://therecipepool.pythonanywhere.com/account/token-refresh/" , {
+    axios.post( baseURL+"account/token-refresh/" , {
       refresh: refreshToken,
     } ,
       {
@@ -113,14 +116,17 @@ const Login = () => {
       setAccessToken(response.data.access);
       localStorage.setItem("accessToken", accessToken);
       console.log("Logged in");
-      window.location.href = '/home'
+      setCount(1);
+      
     }
     ).catch((err) => console.log("error in token2  : ",err));
-    
-    
 
     return response;
     }
+
+    useEffect(() => {
+      window.location.href = '/';
+    },[count]);
 
 return (
     <Grid>
