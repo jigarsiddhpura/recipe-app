@@ -135,7 +135,7 @@ const Home = () => {
     color: theme.palette.text.secondary,
   }));
 
-  const baseURL = 'https://therecipepool.pythonanywhere.com/api/filter-meal/'
+  const baseURL = 'https://therecipepool.pythonanywhere.com'
 
 
   function RenderData(props){
@@ -150,7 +150,7 @@ const Home = () => {
         <CardMedia
           component="img"
           height="194"
-          image={baseURL+recipe.cuisine.image}
+          image={baseURL+recipe.image}
           alt={recipe.label}
           sx={{borderRadius:'0.5rem', margin:'0.8rem', display:'inline-block', width:'90%'}}
         />
