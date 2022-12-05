@@ -9,33 +9,33 @@ import Toolbar from "@mui/material/Toolbar";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
 import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Collapse from '@mui/material/Collapse';
-import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import { red } from '@mui/material/colors';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Playfair+Display:wght@800;900&display=swap" rel="stylesheet"></link>
 
 const searchStyle = {display:'flex' , justifyContent:'center'};
-const cardStyle = { maxWidth: 320 , borderRadius:'1rem', mb:'1rem'};
+const cardStyle = { width:'17rem', borderRadius:'1rem', mb:'1rem'};
 const titleStyle = {display:'flex', justifyContent:'center', fontSize:'1.3rem', fontFamily: 'DM Serif Display'};
 const signupStyle = {color:'white',position:'absolute', right:'18%', top:'10%', borderRadius:'4rem', border:'2px solid white'
 , marginLeft:'1.2rem',textDecoration:'none'};
 const loginStyle = {backgroundColor:'white', color:'black', position:'absolute', right:'10%', top:'10%', border:'2px solid white'
 , borderRadius:'4rem',textDecoration:'none'};
+const tabStyle = {borderRadius:'10rem', backgroundColor:'#eceff1', color:'white', border:'2px solid pink'}
+
 
 const Home = () => {
   const [recipeData , setRecipeData] = useState([]);
@@ -105,6 +105,16 @@ const Home = () => {
     },
   }));
 
+  // Tab function start
+  const [value, setValue] = useState('dinner');
+  // function handleChange(value){
+  //   setValue(value);
+  //   console.log(value);
+  // }
+  useEffect(()=>{
+    console.log(value);
+  },[value])
+
   // cards functions start
 
   const ExpandMore = styled((props) => {
@@ -144,8 +154,9 @@ const Home = () => {
     const recipes = recipeDataCopy.map(
       (recipe) => 
       // enter {} here leads to blank page ???
-      <span key={recipe.id}>
-
+      <span key={recipe.id}
+      style={{display:'inline-block', width:'300px'}}>
+    <Grid item  sm={6} md={4} xs={12} >
       <Card sx={cardStyle}>
         <CardMedia
           component="img"
@@ -210,12 +221,15 @@ const Home = () => {
 
         
       </Card>
+      </Grid>
       </span>
 
       );
       return(
       <> {recipes} </> );  
   }
+
+
 
   return (
     <>
@@ -263,12 +277,26 @@ const Home = () => {
       
     </Box>
 
+    {/* tabs start */}
+
+    <Box sx={{ width: '100%', bgcolor: '#424242', p:'1rem' }}>
+      <Tabs value={value} centered
+      indicatorColor="white"
+      textColor="white"
+      style={{m:'1rem', color:'white'}}>
+        <Tab label="Breakfast" value='breakfast' onClick={e => setValue(e.target.value)}/>
+        <Tab label="Lunch"  value='lunch' onClick={e => setValue(e.target.value)}/>
+        <Tab label="Dinner" value='dinner'  onClick={e => setValue(e.target.value)}/>
+      </Tabs>
+    </Box>
+
+    {/* cards start */}
+
     <Box sx={{ flexGrow: 1, backgroundColor:'#424242'}}>
-      <Grid container spacing={{sm:2,md:3}} 
-    sx={{p:'2rem'}}>
-        <Grid item  sm={6} md={4} xs={12} >
+      <Grid container spacing={{sm:2,md:4}} 
+    sx={{p:'2rem', position:'relative',top:'1.5rem'}}>
+        
           <RenderData data={recipeData}/>
-        </Grid>
       </Grid>
     </Box>
 
