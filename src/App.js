@@ -11,7 +11,6 @@ function App() {
   
   return (
     <div className='LoginPg'> 
-    {/* <Login/> */}
     <Router>
         <Routes>
           <Route path="/signup" element={<Signup/>}>

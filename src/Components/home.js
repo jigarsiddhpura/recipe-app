@@ -39,13 +39,23 @@ const tabStyle = {borderRadius:'10rem', backgroundColor:'#eceff1', color:'white'
 
 const Home = () => {
   const [recipeData , setRecipeData] = useState([]);
+  
+  // Tab function start
+  const [value, setValue] = useState('dinner');
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+    console.log(newValue);
+  }
+  
+  useEffect(()=>{
+    sendGetRequest();
+  },[value])
+  
   const sendGetRequest = async () => {
-    
-
       try {
           await axios.post('https://therecipepool.pythonanywhere.com/api/filter-meal/',
-          { meal:'dinner'},
-          {
+          { meal: value },
+          { 
               headers:{
                   'Authorization' : 'Bearer' + localStorage.getItem('accessToken'),
                   'Content-Type': 'application/x-www-form-urlencoded'
@@ -54,12 +64,13 @@ const Home = () => {
           // .then((response) => console.log(response))
           .then(response => setRecipeData(response.data))
           .catch(err => console.log("error in try sGR : ", err));
+          // .catch(error => handleError(error));
       } catch (err) {
           console.log("error in sendGetRequest",err);
       }
   };
-  // console.log(recipeData);
-  sendGetRequest();
+
+
 
   // header functions start
   
@@ -105,15 +116,7 @@ const Home = () => {
     },
   }));
 
-  // Tab function start
-  const [value, setValue] = useState('dinner');
-  // function handleChange(value){
-  //   setValue(value);
-  //   console.log(value);
-  // }
-  useEffect(()=>{
-    console.log(value);
-  },[value])
+  
 
   // cards functions start
 
@@ -128,13 +131,12 @@ const Home = () => {
     }),
   }));
   
-  const RecipeReviewCard = () => {
+  
     const [expanded, setExpanded] = React.useState(false);
   
     const handleExpandClick = () => {
       setExpanded(!expanded);
     }
-  };
 
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -147,6 +149,19 @@ const Home = () => {
 
   const baseURL = 'https://therecipepool.pythonanywhere.com'
 
+  function RenderSteps(props){
+    const recipeSteps = props.data;
+    const steps = recipeSteps.map(
+      (step) => 
+      <span key={step.id}>
+          <Typography paragraph>
+            {step.steps}
+            </Typography>
+      </span>
+    );
+    return(
+      <> {steps} </> );
+  }
 
   function RenderData(props){
     const recipeDataCopy = props.data;
@@ -179,9 +194,9 @@ const Home = () => {
             <ShareIcon />
           </IconButton>
           <ExpandMore
-            expand={RecipeReviewCard.expanded}
-            onClick={RecipeReviewCard.handleExpandClick}
-            aria-expanded={RecipeReviewCard.expanded}
+            expand={expanded}
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
             aria-label="show more"
           >
             <ExpandMoreIcon />
@@ -189,33 +204,14 @@ const Home = () => {
 
         </CardActions>
         
-        <Collapse in={RecipeReviewCard.expanded} timeout="auto" unmountOnExit>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
             <Typography paragraph>Method:</Typography>
-            <Typography paragraph>
-              Heat 1/2 cup of the broth in a pot until simmering, add saffron and set
-              aside for 10 minutes.
-            </Typography>
-            <Typography paragraph>
-              Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over
-              medium-high heat. Add chicken, shrimp and chorizo, and cook, stirring
-              occasionally until lightly browned, 6 to 8 minutes. Transfer shrimp to a
-              large plate and set aside, leaving chicken and chorizo in the pan. Add
-              pimentón, bay leaves, garlic, tomatoes, onion, salt and pepper, and cook,
-              stirring often until thickened and fragrant, about 10 minutes. Add
-              saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.
-            </Typography>
-            <Typography paragraph>
-              Add rice and stir very gently to distribute. Top with artichokes and
-              peppers, and cook without stirring, until most of the liquid is absorbed,
-              15 to 18 minutes. Reduce heat to medium-low, add reserved shrimp and
-              mussels, tucking them down into the rice, and cook again without
-              stirring, until mussels have opened and rice is just tender, 5 to 7
-              minutes more. (Discard any mussels that don&apos;t open.)
-            </Typography>
-            <Typography>
-              Set aside off of the heat to let rest for 10 minutes, and then serve.
-            </Typography>
+              {<RenderSteps data={recipe.steps_list}/>}
+
+            {/* <Typography paragraph>
+            {recipe.steps_list[i].steps}
+             </Typography> */}
           </CardContent>
         </Collapse>
 
@@ -228,7 +224,6 @@ const Home = () => {
       return(
       <> {recipes} </> );  
   }
-
 
 
   return (
@@ -263,7 +258,7 @@ const Home = () => {
 
           <Button variant="outlined"
           sx={loginStyle}>
-            <Link to="/login" underline="hover">
+          <Link to="/login" underline="hover">
                 Login
           </Link>
           </Button>
@@ -283,10 +278,11 @@ const Home = () => {
       <Tabs value={value} centered
       indicatorColor="white"
       textColor="white"
+      onChange={handleChange}
       style={{m:'1rem', color:'white'}}>
-        <Tab label="Breakfast" value='breakfast' onClick={e => setValue(e.target.value)}/>
-        <Tab label="Lunch"  value='lunch' onClick={e => setValue(e.target.value)}/>
-        <Tab label="Dinner" value='dinner'  onClick={e => setValue(e.target.value)}/>
+        <Tab label="Breakfast" value='breakfast' />
+        <Tab label="Lunch"  value='lunch' />
+        <Tab label="Dinner" value='dinner'  />
       </Tabs>
     </Box>
 

@@ -79,7 +79,7 @@ const Login = () => {
 
   const postData = async () => {
     try {
-      axios
+      await axios
         .post("https://therecipepool.pythonanywhere.com/account/login/", {
           email: formValues.email,
           password: formValues.password,
@@ -97,11 +97,12 @@ const Login = () => {
     }
   };
 
-  const [count , setCount] = useState(0);
+  const [loggedin , setLoggedin] = useState(false);
   const baseURL = 'https://therecipepool.pythonanywhere.com/'
 
 
-  const token2 = (response) => {
+  const token2 = async (response) => {
+    await 
     axios.post( baseURL+"account/token-refresh/" , {
       refresh: refreshToken,
     } ,
@@ -116,7 +117,7 @@ const Login = () => {
       setAccessToken(response.data.access);
       localStorage.setItem("accessToken", accessToken);
       console.log("Logged in");
-      setCount(1);
+      setLoggedin(true);
       
     }
     ).catch((err) => console.log("error in token2  : ",err));
@@ -126,7 +127,7 @@ const Login = () => {
 
     useEffect(() => {
       window.location.href = '/';
-    },[count]);
+    },[loggedin]);
 
 return (
     <Grid>
@@ -179,7 +180,6 @@ return (
               fullWidth
               onClick={handleSubmit}
             >
-              
               SIGN IN 
             </Button>
 
