@@ -126,7 +126,7 @@ const Login = () => {
     }
 
     useEffect(() => {
-      window.location.href = '/';
+      if(loggedin) window.location.href = '/';
     },[loggedin]);
 
 return (
