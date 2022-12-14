@@ -170,7 +170,7 @@ const Home = () => {
       (recipe) => 
       // enter {} here leads to blank page ???
       <span key={recipe.id}
-      style={{display:'inline-block', width:'300px'}}>
+      style={{display:'inline-block',width:'300px'}}>
     <Grid item  sm={6} md={4} xs={12} >
       <Card sx={cardStyle}>
         <CardMedia
@@ -256,7 +256,8 @@ const Home = () => {
           </Link> 
           </Button>
 
-          <Button variant="outlined"
+          <Button variant="text"
+
           sx={loginStyle}>
           <Link to="/login" underline="hover">
                 Login
@@ -274,7 +275,7 @@ const Home = () => {
 
     {/* tabs start */}
 
-    <Box sx={{ width: '100%', bgcolor: '#424242', p:'1rem' }}>
+    <Box sx={{ maxWidth: '100%', bgcolor: '#424242', p:'1rem' }}>
       <Tabs value={value} centered
       indicatorColor="white"
       textColor="white"
@@ -289,10 +290,11 @@ const Home = () => {
     {/* cards start */}
 
     <Box sx={{ flexGrow: 1, backgroundColor:'#424242'}}>
-      <Grid container spacing={{sm:2,md:4}} 
-    sx={{p:'2rem', position:'relative',top:'1.5rem'}}>
+      <Grid container spacing={{sm:2,md:4,lg:5}} 
+      sx={{p:'2rem 2rem 0rem 5rem', position:'relative',top:'1.5rem'}}>
         
-          <RenderData data={recipeData}/>
+        <RenderData data={recipeData}/>
+        
       </Grid>
     </Box>
 
