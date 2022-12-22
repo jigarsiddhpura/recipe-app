@@ -16,16 +16,23 @@ import LockIcon from "@mui/icons-material/Lock";
 import axios from "axios";
 
 const Login = () => {
+
   const paperStyle = {
     padding: 20,
     height: "70vh",
-    width: "400px",
+    width: "380px",
     margin: "20px auto",
   };
-  const avatarStyle = { backgroundColor: "green" };
+  // backgroundImage: 'linear-gradient(227deg, #40c057 5%, #4dabf7 95%)'
+  const avatarStyle = {
+    backgroundImage: "linear-gradient(227deg, #40c057 5%, #4dabf7 95%)",
+  };
   const textFieldStyle = { margin: "10px" };
   const checkboxStyle = { position: "relative", right: "28%" };
-  const btnStyle = { margin: "5px  " };
+  const btnStyle = {
+    margin: "5px  ",
+    backgroundImage: "linear-gradient(227deg, #40c057 5%, #4dabf7 95%)",
+  };
   const errorStyle = {
     display: "flex",
     align: "left",
@@ -74,8 +81,8 @@ const Login = () => {
     return errors;
   };
 
-  const [accessToken , setAccessToken] = useState('');
-  const [refreshToken , setRefreshToken] = useState('');
+  const [accessToken, setAccessToken] = useState("");
+  const [refreshToken, setRefreshToken] = useState("");
 
   const postData = async () => {
     try {
@@ -91,114 +98,114 @@ const Login = () => {
           setRefreshToken(response.data.refresh);
           token2(response);
         })
-        .catch((err) => console.log("error in postData try : ",err));
+        .catch((err) => console.log("error in postData try : ", err));
     } catch (err) {
       console.log("error is", err);
     }
   };
 
-  const [loggedin , setLoggedin] = useState(false);
-  const baseURL = 'https://therecipepool.pythonanywhere.com/'
-
+  const [loggedin, setLoggedin] = useState(false);
+  const baseURL = "https://therecipepool.pythonanywhere.com/";
 
   const token2 = async (response) => {
-    await 
-    axios.post( baseURL+"account/token-refresh/" , {
-      refresh: refreshToken,
-    } ,
-      {
-        headers: {
-          'Authorization' : 'Bearer' + accessToken,
-          'Content-Type': 'application/x-www-form-urlencoded'
+    await axios
+      .post(
+        baseURL + "account/token-refresh/",
+        {
+          refresh: refreshToken,
+        },
+        {
+          headers: {
+            Authorization: "Bearer" + accessToken,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
         }
-      }
-    ).then((response) => {
-      setRefreshToken(response.data.refresh);
-      setAccessToken(response.data.access);
-      localStorage.setItem("accessToken", accessToken);
-      console.log("Logged in");
-      setLoggedin(true);
-      
-    }
-    ).catch((err) => console.log("error in token2  : ",err));
+      )
+      .then((response) => {
+        setRefreshToken(response.data.refresh);
+        setAccessToken(response.data.access);
+        localStorage.setItem("accessToken", accessToken);
+        console.log("Logged in");
+        setLoggedin(true);
+      })
+      .catch((err) => console.log("error in token2  : ", err));
 
     return response;
-    }
+  };
 
-    useEffect(() => {
-      if(loggedin) window.location.href = '/';
-    },[loggedin]);
+  useEffect(() => {
+    if (loggedin) window.location.href = "/";
+  }, [loggedin]);
 
-return (
-    <Grid>
-      <form>
-        <Paper elevation={10} style={paperStyle}>
-          <Grid align="center">
-            <Avatar style={avatarStyle}>
-              <LockIcon />
-            </Avatar>
-            <h2>Sign In</h2>
+  return (
+    <Grid >
+        <form >
+          <Paper elevation={10} style={paperStyle}>
+            <Grid align="center">
+              <Avatar style={avatarStyle}>
+                <LockIcon />
+              </Avatar>
+              <h2>Sign In</h2>
 
-            <TextField
-              id="outlined-basic"
-              label="Email"
-              placeholder="Enter Email"
-              variant="outlined"
-              fullWidth
-              required
-              style={textFieldStyle}
-              name="email"
-              onChange={handleChange}
-              value={formValues.email}
-            />
-            <p style={errorStyle}>{formErrors.username}</p>
-            <TextField
-              id="outlined-basic"
-              label="Password"
-              placeholder="Enter password"
-              type="password"
-              variant="outlined"
-              fullWidth
-              required
-              style={textFieldStyle}
-              name="password"
-              onChange={handleChange}
-              value={formValues.password}
-            />
-            <p style={errorStyle}>{formErrors.password}</p>
+              <TextField
+                id="outlined-basic"
+                label="Email"
+                placeholder="Enter Email"
+                variant="outlined"
+                fullWidth
+                required
+                style={textFieldStyle}
+                name="email"
+                onChange={handleChange}
+                value={formValues.email}
+              />
+              <p style={errorStyle}>{formErrors.username}</p>
+              <TextField
+                id="outlined-basic"
+                label="Password"
+                placeholder="Enter password"
+                type="password"
+                variant="outlined"
+                fullWidth
+                required
+                style={textFieldStyle}
+                name="password"
+                onChange={handleChange}
+                value={formValues.password}
+              />
+              <p style={errorStyle}>{formErrors.password}</p>
 
-            <FormControlLabel
-              control={<Checkbox color="success" />}
-              label="Remember me"
-              style={checkboxStyle}
-            />
+              <FormControlLabel
+                control={<Checkbox color="success" />}
+                label="Remember me"
+                style={checkboxStyle}
+              />
 
-            <Button
-              variant="contained"
-              color="success"
-              style={btnStyle}
-              fullWidth
-              onClick={handleSubmit}
-            >
-              SIGN IN 
-            </Button>
+              <Button
+                variant="contained"
+                style={btnStyle}
+                fullWidth
+                onClick={handleSubmit}
+              >
+                SIGN IN
+              </Button>
 
-            <Typography>
-              <Link to="#" underline="hover">
-                Forgot password ?
-              </Link>
-            </Typography>
+              <Typography>
+                <Link to="#" underline="hover">
+                  Forgot password ?
+                </Link>
+              </Typography>
 
-            <Typography>
-              Do you have an account ?
-              <Link to="/signup" underline="hover ">
-                Sign Up
-              </Link>
-            </Typography>
-          </Grid>
-        </Paper>
-      </form>
-    </Grid>
+              <Typography>
+                Do you have an account ?
+                <Link to="/signup" underline="hover ">
+                  Sign Up
+                </Link>
+              </Typography>
+            </Grid>
+          </Paper>
+        </form>
+      </Grid>
   );
 };
 export default Login;

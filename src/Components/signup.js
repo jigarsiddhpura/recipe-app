@@ -19,10 +19,10 @@ const Signup = () => {
     width: "420px",
     margin: "20px auto",
   };
-  const avatarStyle = { backgroundColor: "green", display:"flex"  };
+  const avatarStyle = { backgroundImage: "linear-gradient(227deg, #40c057 5%, #4dabf7 95%)", display:"flex"  };
   const textFieldStyle = { margin: "10px" };
   // const checkboxStyle = { position: "relative", right: "28%" };
-  const btnStyle = { margin: "5px  " };
+  const btnStyle = { margin: "5px  ",backgroundImage: "linear-gradient(227deg, #40c057 5%, #4dabf7 95%)" };
   const numberStyle = {position:'relative', left:'2.5%'}
   const radioStyle={position:'relative', right:'18%', margin:'4px'};
   const genderStyle ={position:'relative', left:'-57%', margin:'2px'};
@@ -229,7 +229,6 @@ const Signup = () => {
 
           <Button
             variant="contained"
-            color="success"
             style={btnStyle}
             onClick={handleSubmit}
             fullWidth
