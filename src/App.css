@@ -28,6 +28,7 @@
   color: #61dafb;
 }
 
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -36,3 +37,27 @@
     transform: rotate(360deg);
   }
 }
+
+/* .login, .signup:is(:hover, :active){
+  background-color: black;
+  color: white;
+} */
+
+
+.tabClass:is(:hover, :active){
+  animation : borderOnHover 10s 1 linear ;
+  transition: border-bottom 1s ease-in-out 2s;
+  border-radius: 4px;
+  transform-origin: left;
+}
+
+@keyframes borderOnHover {
+  0% {
+    border-bottom: 0px solid white;
+  }
+  100% {
+    border-bottom: 4px solid white;
+  }
+}
+
+
