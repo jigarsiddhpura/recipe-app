@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import * as React from "react";
@@ -23,19 +23,25 @@ import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { motion } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
 import { pink, red } from "@mui/material/colors";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import "../index.css";
 import { hover } from "@testing-library/user-event/dist/hover";
+import styles from "../App.css";
+import { useInView } from "react-intersection-observer";
+import { Inventory } from "@mui/icons-material";
 
 <link
   href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Playfair+Display:wght@800;900&display=swap"
   rel="stylesheet"
 ></link>;
+<link
+  href="https://fonts.googleapis.com/css2?family=Raleway:wght@500&display=swap"
+  rel="stylesheet"
+></link>;
 
 const Home = () => {
-
   // adding event listener for responsiveness
   const [width, setWindowWidth] = useState(0);
 
@@ -52,17 +58,19 @@ const Home = () => {
 
   const response = { responsive: width < 1000 };
   const resp = response.responsive;
-  // 
+  //
 
-  const searchStyle = { display: "flex",
-  justifyContent: resp ? "flex-start" : "center" };
+  const searchStyle = {
+    display: "flex",
+    justifyContent: resp ? "flex-start" : "center",
+  };
   const searchBarStyle = {
     borderRadius: "10rem",
     color: "#eceff1",
     flexShrink: "6",
     display: "inline",
-    width: resp ? "40vw" : "35vw"
-  }
+    width: resp ? "40vw" : "35vw",
+  };
   const cardStyle = { width: "17rem", borderRadius: "1rem", mb: "1rem" };
   const titleStyle = {
     display: "flex",
@@ -84,19 +92,17 @@ const Home = () => {
     backgroundColor: "white",
     color: "black",
     position: "absolute",
-    right: resp ? "12vw" :"10vw",
+    right: resp ? "12vw" : "10vw",
     top: "2vh",
     border: "2px solid white",
     borderRadius: "4rem",
     textDecoration: "none",
   };
   const tabStyle = {
-    borderRadius: "10rem",
-    backgroundColor: "#eceff1",
-    color: "white",
-    border: "2px solid pink",
+    color: "orange",
+    fontSize: "1rem",
+    fontFamily: "Raleway, sans-serif",
   };
-
 
   const [recipeData, setRecipeData] = useState([]);
 
@@ -211,6 +217,7 @@ const Home = () => {
   const baseURL = "https://therecipepool.pythonanywhere.com";
 
   function RenderSteps(props) {
+    // reicpesteps = steps ka list , step = each step
     const recipeSteps = props.data;
     const steps = recipeSteps.map((step) => (
       <span key={step.id}>
@@ -220,14 +227,46 @@ const Home = () => {
     return <> {steps} </>;
   }
 
-  function RenderData(props) {
-    const recipeDataCopy = props.data;
+  function changeColor(e, recipes) {
+    const c = recipes.map((recipe) => (
+      <span key={recipe.id}>
+        recipe.id = e.currentTarget.id ? setLikeClr(!likeclr) :
+        setLikeClr(likeclr)
+      </span>
+    ));
+    return c;
+  }
+
+  const { ref, inView } = useInView({
+    threshold : 0.2
+  });
+  const animation = useAnimation();
+  useEffect(() => {
+    if(inView){
+      animation.start({
+          x:0, 
+          transition:{ type: 'spring', duration: 1, bounce: 0.3 }
+        }
+      );
+    }
+    if(!inView){
+      animation.start({x: '-100vw'})
+    }
+    console.log('animation working');
+  },[inView])
+
+  function RenderData() {
+    // const recipeDataCopy = props.data;
     // props.data = entire array of recipes
-    const recipes = recipeDataCopy.map((recipe) => (
+    const recipes = recipeData.map((recipe) => (
       // enter {} here leads to blank page ???
-      <span key={recipe.id} style={{ display: "inline-block", width: "300px" }}>
-        <Grid item sm={6} md={4} xs={12}>
-          <Card sx={cardStyle}>
+      <span
+        key={recipe.id}
+        style={{ display: "inline-block", width: "300px" }}
+      >
+        <Grid item sm={6} md={4} xs={12}
+        >
+          <Card sx={cardStyle}  >
             <CardMedia
               component="img"
               height="194"
@@ -248,23 +287,17 @@ const Home = () => {
             </CardContent>
             <CardActions disableSpacing>
               <IconButton aria-label="add to favorites">
-                {/* <img src="../images/like-icon.png" alt="like-icon" 
-                style={{width : '2rem', height:'2rem'}}
-                component={motion.div}
-                animate={{color: likeclr ? "red" : "white"}}
-                onClick={()=> {
-                  setLikeClr(!likeclr);
-                }}
-                /> */}
-
                 <FavoriteIcon
-                  sx={{ border: "1px solid black" }}
-                  component={motion.div}
-                  key={recipe.id}
-                  animate={{ backgroundColor: likeclr ? "red" : "#bdbdbd" }}
-                  onClick={() => {
-                    setLikeClr(!likeclr);
-                    // console.log(recipe.id);
+                  id={recipe.id}
+                  sx={{ color: likeclr ? "red" : "#bdbdbd" }}
+                  // component={motion.div}
+                  // animate={{ backgroundColor: likeclr ? "red" : "#bdbdbd" }}
+                  onClick={(e) => {
+                    // recipe.id = e.currentTarget.id ? setLikeClr(!likeclr) : setLikeClr(likeclr);
+
+                    changeColor(e, recipeData);
+                    console.log(recipe.id);
+                    console.log(e.currentTarget.id);
                   }}
                 />
               </IconButton>
@@ -285,10 +318,6 @@ const Home = () => {
               <CardContent>
                 <Typography paragraph>Method:</Typography>
                 {<RenderSteps data={recipe.steps_list} />}
-
-                {/* <Typography paragraph>
-            {recipe.steps_list[i].steps}
-             </Typography> */}
               </CardContent>
             </Collapse>
           </Card>
@@ -301,7 +330,8 @@ const Home = () => {
   return (
     <>
       {/* header start */}
-      <Box sx={{ flexGrow: 1 }}>
+      <Box sx={{ flexGrow: 1 }}
+      ref={ref}>
         <AppBar
           position="static"
           sx={{
@@ -313,11 +343,9 @@ const Home = () => {
           }}
         >
           <Toolbar style={searchStyle}>
-            <Search
-              style={searchBarStyle}
-            >
+            <Search style={searchBarStyle}>
               <SearchIconWrapper>
-                <SearchIcon />
+                <SearchIcon style={{ color: "orange" }} />
               </SearchIconWrapper>
               <StyledInputBase
                 placeholder="Search Recipes…"
@@ -336,7 +364,8 @@ const Home = () => {
                 </Link>
               </Button>
 
-              <Button variant="text" sx={loginStyle} className="login">
+              <Button variant="text" sx={loginStyle} className="login"
+              >
                 <Link
                   to="/login"
                   underline="hover"
@@ -348,16 +377,18 @@ const Home = () => {
             </Stack>
           </Toolbar>
 
-          <p
+          <motion.p
             style={{
               display: "flex",
               justifyContent: "center",
               fontSize: "2rem",
+              color: "orange",
               fontFamily: "Playfair Display",
             }}
+            animate = {animation}
           >
             Explore Recipes
-          </p>
+          </motion.p>
         </AppBar>
       </Box>
 
@@ -372,21 +403,45 @@ const Home = () => {
           onChange={handleChange}
           style={{ m: "1rem", color: "white" }}
         >
-          <Tab label="Breakfast" value="breakfast" />
-          <Tab label="Lunch" value="lunch" />
-          <Tab label="Dinner" value="dinner" />
+          <Tab
+            label="Breakfast"
+            value="breakfast"
+            style={tabStyle}
+            className={"tabClass"}
+          />
+          <Tab
+            label="Lunch"
+            value="lunch"
+            style={tabStyle}
+            className={"tabClass"}
+          />
+          <Tab
+            label="Dinner"
+            value="dinner"
+            style={tabStyle}
+            className={"tabClass"}
+          />
         </Tabs>
       </Box>
 
       {/* cards start */}
 
-      <Box sx={{ flexGrow: 1, backgroundColor: "#424242" }}>
+      <Box
+        sx={{
+          flexGrow: 1,
+          backgroundImage:
+            "linear-gradient(0deg, #1c1c1c 5%, rgba(246, 139, 26, 0.82) 100%)",
+          position: "relative",
+          top: "2rem",
+        }}
+      >
         <Grid
           container
           spacing={{ sm: 2, md: 4, lg: 5 }}
           sx={{ p: "2rem 2rem 0rem 5rem", position: "relative", top: "1.5rem" }}
         >
-          <RenderData data={recipeData} />
+          <RenderData/>
+          {/* {RenderData} */}
         </Grid>
       </Box>
     </>

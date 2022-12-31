@@ -14,14 +14,39 @@ import {
 } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
 import axios from "axios";
+import styles from '../App.css';
 
 const Login = () => {
+  // adding event listener for responsiveness
+  const [width, setWindowWidth] = useState(0);
+
+  useEffect(() => {
+    updateDimensions();
+    window.addEventListener("resize", updateDimensions);
+    return () => window.removeEventListener("resize", updateDimensions);
+  }, []);
+
+  const updateDimensions = () => {
+    const width = window.innerWidth;
+    setWindowWidth(width);
+  };
+
+  const response = { responsive: width < 1100 };
+  const resp = response.responsive;
+  const response2 = { responsive: width < 700 };
+  const resp2 = response2.responsive;
+  //
 
   const paperStyle = {
-    padding: 20,
+    padding: "20",
     height: "70vh",
-    width: "380px",
-    margin: "20px auto",
+    width : resp ? "20rem" : "25rem",
+    margin: " 1rem ",
+    position: "relative",
+    bottom: resp ? "" : "6rem",
+    top : resp ? "3rem" : "",
+    right: resp ? "-1rem" : "4rem",
+    justifyContent : resp2 ? "center" : "normal"
   };
   // backgroundImage: 'linear-gradient(227deg, #40c057 5%, #4dabf7 95%)'
   const avatarStyle = {
@@ -138,74 +163,85 @@ const Login = () => {
   }, [loggedin]);
 
   return (
-    <Grid >
-        <form >
-          <Paper elevation={10} style={paperStyle}>
-            <Grid align="center">
-              <Avatar style={avatarStyle}>
-                <LockIcon />
-              </Avatar>
-              <h2>Sign In</h2>
+    <div  style={{ height: "100vh" }}>
+      {/* <Grid item> */}
+      <img
+        src="https://media.gettyimages.com/id/175409166/photo/lamb-and-aparagus.jpg?s=612x612&w=0&k=20&c=kv2J_iNLSW3I_4717-zTJCWW1fLj2jFd-aGYdczoUPM="
+        alt="dish-img"
+        style={{
+          width: resp ? "50%" : "60%",
+          display: resp2 ? "none" : "inline-block",
+          position: "relative",
+          top: "4rem",
+        }}
+      />
+      {/* </Grid> */}
 
-              <TextField
-                id="outlined-basic"
-                label="Email"
-                placeholder="Enter Email"
-                variant="outlined"
-                fullWidth
-                required
-                style={textFieldStyle}
-                name="email"
-                onChange={handleChange}
-                value={formValues.email}
-              />
-              <p style={errorStyle}>{formErrors.username}</p>
-              <TextField
-                id="outlined-basic"
-                label="Password"
-                placeholder="Enter password"
-                type="password"
-                variant="outlined"
-                fullWidth
-                required
-                style={textFieldStyle}
-                name="password"
-                onChange={handleChange}
-                value={formValues.password}
-              />
-              <p style={errorStyle}>{formErrors.password}</p>
+      <form style={{ display: resp2 ? "flex" : "inline-block"}}>
+        <Grid item align="center" style={paperStyle}>
+          <Avatar style={avatarStyle}>
+            <LockIcon />
+          </Avatar>
+          <h2>Sign In</h2>
 
-              <FormControlLabel
-                control={<Checkbox color="success" />}
-                label="Remember me"
-                style={checkboxStyle}
-              />
+          <TextField
+            id="outlined-basic"
+            label="Email"
+            placeholder="Enter Email"
+            variant="outlined"
+            fullWidth
+            required
+            style={textFieldStyle}
+            name="email"
+            onChange={handleChange}
+            value={formValues.email}
+          />
+          <p style={errorStyle}>{formErrors.username}</p>
+          <TextField
+            id="outlined-basic"
+            label="Password"
+            placeholder="Enter password"
+            type="password"
+            variant="outlined"
+            fullWidth
+            required
+            style={textFieldStyle}
+            name="password"
+            onChange={handleChange}
+            value={formValues.password}
+          />
+          <p style={errorStyle}>{formErrors.password}</p>
 
-              <Button
-                variant="contained"
-                style={btnStyle}
-                fullWidth
-                onClick={handleSubmit}
-              >
-                SIGN IN
-              </Button>
+          <FormControlLabel
+            control={<Checkbox color="success" />}
+            label="Remember me"
+            style={checkboxStyle}
+          />
 
-              <Typography>
-                <Link to="#" underline="hover">
-                  Forgot password ?
-                </Link>
-              </Typography>
+          <Button
+            variant="contained"
+            style={btnStyle}
+            fullWidth
+            onClick={handleSubmit}
+          >
+            SIGN IN
+          </Button>
 
-              <Typography>
-                Do you have an account ?
-                <Link to="/signup" underline="hover ">
-                  Sign Up
-                </Link>
-              </Typography>
-            </Grid>
-          </Paper>
-        </form>
-      </Grid>
+          <Typography>
+            <Link to="#" underline="hover">
+              Forgot password ?
+            </Link>
+          </Typography>
+
+          <Typography>
+            Do you have an account ?
+            <Link to="/signup" underline="hover ">
+              Sign Up
+            </Link>
+          </Typography>
+        </Grid>
+      </form>
+    </div>
   );
 };
 export default Login;
