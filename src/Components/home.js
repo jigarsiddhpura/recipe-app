@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import * as React from "react";
@@ -24,13 +24,10 @@ import Button from "@mui/material/Button";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { motion, useAnimation } from "framer-motion";
-import { pink, red } from "@mui/material/colors";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import "../index.css";
-import { hover } from "@testing-library/user-event/dist/hover";
-import styles from "../App.css";
+import "../App.css";
 import { useInView } from "react-intersection-observer";
-import { Inventory } from "@mui/icons-material";
 
 <link
   href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Playfair+Display:wght@800;900&display=swap"
@@ -78,26 +75,7 @@ const Home = () => {
     fontSize: "1.3rem",
     fontFamily: "DM Serif Display",
   };
-  const signupStyle = {
-    backgroundColor: "white",
-    position: "absolute",
-    right: resp ? "23vw" : "18vw",
-    top: "2vh",
-    borderRadius: "4rem",
-    border: "2px solid white",
-    marginLeft: "1.2rem",
-    textDecoration: "none",
-  };
-  const loginStyle = {
-    backgroundColor: "white",
-    color: "black",
-    position: "absolute",
-    right: resp ? "12vw" : "10vw",
-    top: "2vh",
-    border: "2px solid white",
-    borderRadius: "4rem",
-    textDecoration: "none",
-  };
+  
   const tabStyle = {
     color: "orange",
     fontSize: "1rem",
@@ -110,7 +88,6 @@ const Home = () => {
   const [value, setValue] = useState("dinner");
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    console.log(newValue);
   };
 
   useEffect(() => {
@@ -202,8 +179,6 @@ const Home = () => {
     setExpanded(!expanded);
   };
 
-  const [likeclr, setLikeClr] = useState(false);
-
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
     ...theme.typography.body2,
@@ -227,46 +202,56 @@ const Home = () => {
     return <> {steps} </>;
   }
 
-  function changeColor(e, recipes) {
-    const c = recipes.map((recipe) => (
-      <span key={recipe.id}>
-        recipe.id = e.currentTarget.id ? setLikeClr(!likeclr) :
-        setLikeClr(likeclr)
-      </span>
-    ));
-    return c;
-  }
+  // function changeColor(e, recipes) {
+  //   const c = recipes.map((recipe) => (
+  //     <span key={recipe.id}>
+  //       recipe.id = e.currentTarget.id ? setLikeClr(!likeclr) :
+  //       setLikeClr(likeclr)
+  //     </span>
+  //   ));
+  //   return c;
+  // }
 
   const { ref, inView } = useInView({
-    threshold : 0.2
+    threshold: 0.2,
   });
   const animation = useAnimation();
   useEffect(() => {
-    if(inView){
+    if (inView) {
       animation.start({
-          x:0, 
-          transition:{ type: 'spring', duration: 1, bounce: 0.3 }
-        }
-      );
+        x: 0,
+        transition: { type: "spring", duration: 1, bounce: 0.3 },
+      });
     }
-    if(!inView){
-      animation.start({x: '-100vw'})
+    if (!inView) {
+      animation.start({ x: "-100vw" });
     }
-    console.log('animation working');
-  },[inView])
+  }, [inView]);
+
+  const [likeclr, setLikeClr] = useState(false);
+  const [selectedOperationId, selectOperation] = useState(-1);
+  const [selected, setSelected] = useState([]);
+
+  const handleLike = (recipeId, likeId) => {
+    if (recipeId == likeId) {
+      setSelected([...new Set(selected.concat([likeId]))]);
+      selectOperation(likeId);
+      console.log(selected);
+      console.log(selectedOperationId);
+    }
+  };
+
+  const [isLoading, setIsLoading] = useState(true);
 
   function RenderData() {
     // const recipeDataCopy = props.data;
     // props.data = entire array of recipes
+
     const recipes = recipeData.map((recipe) => (
       // enter {} here leads to blank page ???
-      <span
-        key={recipe.id}
-        style={{ display: "inline-block", width: "300px" }}
-      >
-        <Grid item sm={6} md={4} xs={12}
-        >
-          <Card sx={cardStyle}  >
+      <span key={recipe.id} style={{ display: "inline-block", width: "300px" }}>
+        <Grid item sm={6} md={4} xs={12} onLoad={() => setIsLoading(false)}>
+          <Card sx={cardStyle}>
             <CardMedia
               component="img"
               height="194"
@@ -287,19 +272,23 @@ const Home = () => {
             </CardContent>
             <CardActions disableSpacing>
               <IconButton aria-label="add to favorites">
-                <FavoriteIcon
-                  id={recipe.id}
-                  sx={{ color: likeclr ? "red" : "#bdbdbd" }}
-                  // component={motion.div}
-                  // animate={{ backgroundColor: likeclr ? "red" : "#bdbdbd" }}
-                  onClick={(e) => {
-                    // recipe.id = e.currentTarget.id ? setLikeClr(!likeclr) : setLikeClr(likeclr);
-
-                    changeColor(e, recipeData);
-                    console.log(recipe.id);
-                    console.log(e.currentTarget.id);
-                  }}
-                />
+                {selectedOperationId in selected ? (
+                  <FavoriteIcon
+                    id={recipe.id}
+                    style={{ color: "red" }}
+                    onClick={(e) => {
+                      handleLike(recipe.id, e.currentTarget);
+                    }}
+                  />
+                ) : (
+                  <FavoriteIcon
+                    id={recipe.id}
+                    style={{ color: "#bdbdbd" }}
+                    onClick={(e) => {
+                      handleLike(recipe.id, e.currentTarget);
+                    }}
+                  />
+                )}
               </IconButton>
               <IconButton aria-label="share">
                 <ShareIcon />
@@ -327,11 +316,35 @@ const Home = () => {
     return <> {recipes} </>;
   }
 
+  const LoginButton = styled(Button)({
+    backgroundColor: "white",
+    position: "absolute",
+    right: resp ? "12vw" : "10vw",
+    top: "2vh",
+    borderRadius: "3rem",
+    marginLeft: "1.2rem",
+    textDecoration: "none",
+    p:'7px',
+    "&:hover": { backgroundColor: "orange", color: "white" },
+  });
+
+  const SignupButton = styled(Button)({
+    backgroundColor: "white",
+    position: "absolute",
+    right: resp ? "23vw" : "18vw",
+    top: "2vh",
+    borderRadius: "3rem",
+    marginLeft: "1.2rem",
+    textDecoration: "none",
+    p:'7px',
+    "&:hover": { backgroundColor: "orange", color: "white" },
+  });
+
   return (
     <>
       {/* header start */}
-      <Box sx={{ flexGrow: 1 }}
-      ref={ref}>
+
+      <Box sx={{ flexGrow: 1 }} ref={ref}>
         <AppBar
           position="static"
           sx={{
@@ -354,26 +367,23 @@ const Home = () => {
               />
             </Search>
             <Stack spacing={5} direction="row">
-              <Button variant="text" sx={signupStyle} className="signup">
-                <Link
+
+              <SignupButton>
+              <Link
                   to="/signup"
-                  underline="hover "
-                  style={{ textDecoration: "none" }}
+                  underline="hover"
+                  style={{textDecoration:'none'}}
                 >
                   Sign Up
                 </Link>
-              </Button>
+              </SignupButton>
 
-              <Button variant="text" sx={loginStyle} className="login"
-              >
-                <Link
-                  to="/login"
-                  underline="hover"
-                  style={{ textDecoration: "none" }}
-                >
+              <LoginButton>
+                <Link to="/login" style={{textDecoration:'none'}}>
                   Login
                 </Link>
-              </Button>
+              </LoginButton>              
+
             </Stack>
           </Toolbar>
 
@@ -385,7 +395,7 @@ const Home = () => {
               color: "orange",
               fontFamily: "Playfair Display",
             }}
-            animate = {animation}
+            animate={animation}
           >
             Explore Recipes
           </motion.p>
@@ -426,24 +436,35 @@ const Home = () => {
 
       {/* cards start */}
 
-      <Box
-        sx={{
-          flexGrow: 1,
-          backgroundImage:
-            "linear-gradient(0deg, #1c1c1c 5%, rgba(246, 139, 26, 0.82) 100%)",
-          position: "relative",
-          top: "2rem",
-        }}
-      >
-        <Grid
-          container
-          spacing={{ sm: 2, md: 4, lg: 5 }}
-          sx={{ p: "2rem 2rem 0rem 5rem", position: "relative", top: "1.5rem" }}
+      {isLoading ? (
+        <div
+          className="dots-7"
+          style={{ position: "relative", left: "47vw", top: "10rem" }}
+        ></div>
+      ) : (
+        <Box
+          sx={{
+            flexGrow: 1,
+            backgroundImage:
+              "linear-gradient(0deg, #1c1c1c 5%, rgba(246, 139, 26, 0.82) 100%)",
+            position: "relative",
+            top: "2rem",
+          }}
+          onLoad={() => setIsLoading(false)}
         >
-          <RenderData/>
-          {/* {RenderData} */}
-        </Grid>
-      </Box>
+          <Grid
+            container
+            spacing={{ sm: 2, md: 4, lg: 5 }}
+            sx={{
+              p: "2rem 2rem 0rem 5rem",
+              position: "relative",
+              top: "1.5rem",
+            }}
+          >
+            <RenderData />
+          </Grid>
+        </Box>
+      )}
     </>
   );
 };
