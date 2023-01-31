@@ -105,12 +105,10 @@ const Home = () => {
               Authorization: "Bearer" + localStorage.getItem("accessToken"),
               "Content-Type": "application/json",
             },
-          }
+          },
         )
-        // .then((response) => console.log(response))
         .then((response) => setRecipeData(response.data))
         .catch((err) => console.log("error in try sGR : ", err));
-      // .catch(error => handleError(error));
     } catch (err) {
       console.log("error in sendGetRequest", err);
     }
@@ -372,7 +370,8 @@ const Home = () => {
               <Link
                   to="/signup"
                   underline="hover"
-                  style={{textDecoration:'none'}}
+                  style={{textDecoration:'none',"&:hover": { backgroundColor: "orange", color: "white" }}}
+
                 >
                   Sign Up
                 </Link>
@@ -436,12 +435,12 @@ const Home = () => {
 
       {/* cards start */}
 
-      {isLoading ? (
+      {/* {isLoading ? (
         <div
           className="dots-7"
           style={{ position: "relative", left: "47vw", top: "10rem" }}
         ></div>
-      ) : (
+      ) : ( */}
         <Box
           sx={{
             flexGrow: 1,
@@ -450,7 +449,7 @@ const Home = () => {
             position: "relative",
             top: "2rem",
           }}
-          onLoad={() => setIsLoading(false)}
+          // onLoad={() => setIsLoading(false)}
         >
           <Grid
             container
@@ -464,7 +463,7 @@ const Home = () => {
             <RenderData />
           </Grid>
         </Box>
-      )}
+
     </>
   );
 };
