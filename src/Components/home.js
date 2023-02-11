@@ -248,7 +248,7 @@ const Home = () => {
     const recipes = recipeData.map((recipe) => (
       // enter {} here leads to blank page ???
       <span key={recipe.id} style={{ display: "inline-block", width: "300px" }}>
-        <Grid item sm={6} md={4} xs={12} onLoad={() => setIsLoading(false)}>
+        <Grid item sm={6} md={4} xs={12} >
           <Card sx={cardStyle}>
             <CardMedia
               component="img"
@@ -270,7 +270,7 @@ const Home = () => {
             </CardContent>
             <CardActions disableSpacing>
               <IconButton aria-label="add to favorites">
-                {selectedOperationId in selected ? (
+                {selected.includes(selectedOperationId) ? (
                   <FavoriteIcon
                     id={recipe.id}
                     style={{ color: "red" }}
@@ -370,8 +370,7 @@ const Home = () => {
               <Link
                   to="/signup"
                   underline="hover"
-                  style={{textDecoration:'none',"&:hover": { backgroundColor: "orange", color: "white" }}}
-
+                  style={{textDecoration:'none'}}
                 >
                   Sign Up
                 </Link>
